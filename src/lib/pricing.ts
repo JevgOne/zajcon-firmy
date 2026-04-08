@@ -1,4 +1,20 @@
-// Cenový algoritmus pro firmy podle specu zajcon-firmy
+// Cenový algoritmus pro firmy s.r.o.
+//
+// CALIBRACE PODLE REÁLNÉHO CZ TRHU (research 2025-04):
+// Profispolečnosti.cz, Firmin.cz, Ceska-ready-made.cz, Profisídla.cz,
+// Incorporated.cz, Easysupport.cz, Readymadesdph.cz, SmartCompanies.cz
+//
+// Reálné mediánové ceny CZ trhu (verify):
+//   Nová RM (ZK 1k, neplátce):    12 900 Kč
+//   ZK 200k, neplátce:            14 900 Kč
+//   ZK 500k, neplátce:            19 900 Kč
+//   ZK 1M, neplátce:              24 900 Kč
+//   ZK 2M+, neplátce:             34 900 Kč
+//   2-3 roky, ZK 200k:            25 000 Kč
+//   5+ let, neplátce:             31 900 Kč
+//   5+ let, plátce DPH:           85 000 Kč  ← skok kvůli DPH
+//   10+ let, ZK 200k+, DPH:      120 000 Kč
+//   15+ let premium s historií:  150-250 000 Kč
 
 export interface PricingFactors {
   stariRoky: number;
@@ -24,30 +40,42 @@ export interface PriceResult {
   };
 }
 
-const BASE_PRICE = 25_000;
+// Mediánová cena nové ready-made s.r.o. na CZ trhu (2025)
+const BASE_PRICE = 12_900;
 
+// Příplatky za stáří firmy (kumulativní, drží se nejvyššímu odpovídajícímu)
 const AGE_BONUS: Array<[number, number]> = [
-  [1, 5_000],
-  [2, 10_000],
-  [3, 15_000],
-  [5, 30_000],
-  [7, 50_000],
-  [10, 80_000],
-  [15, 120_000],
+  [1, 2_000],
+  [2, 5_000],
+  [3, 10_000],
+  [5, 20_000],
+  [7, 30_000],
+  [10, 50_000],
+  [15, 100_000],
+  [20, 150_000],
 ];
 
+// Příplatky za základní kapitál
+// (CZ trh nepřipočítává ZK 1:1 — jde o právní stav, ne reálný kapitál)
 const ZK_BONUS: Array<[number, number]> = [
   [1_000, 0],
-  [50_000, 5_000],
-  [100_000, 10_000],
-  [200_000, 20_000],
-  [500_000, 40_000],
-  [1_000_000, 70_000],
-  [2_000_000, 100_000],
+  [50_000, 1_000],
+  [100_000, 1_500],
+  [200_000, 2_000],
+  [500_000, 7_000],
+  [1_000_000, 12_000],
+  [2_000_000, 22_000],
+  [5_000_000, 40_000],
+  [10_000_000, 60_000],
 ];
 
-const PLATCE_DPH_BONUS = 15_000;
-const HISTORIE_OBRATU_BONUS = 25_000;
+// DPH plátcovství je největší cenový skok na trhu (cca +55k)
+const PLATCE_DPH_BONUS = 55_000;
+
+// Aktivní historie obratu (firma už něco fakturovala)
+const HISTORIE_OBRATU_BONUS = 30_000;
+
+// Premium listing (značka, reference, top sídlo) — multiplikátor
 const PREMIUM_MULTIPLIER = 1.2;
 
 export function calculatePrice(factors: PricingFactors): PriceResult {
@@ -97,15 +125,16 @@ export function calculatePrice(factors: PricingFactors): PriceResult {
     breakdown.push({ factor: "Premium listing", adjustment: premiumDiff });
   }
 
-  price = Math.round(price / 1000) * 1000;
+  // Zaokrouhlení na 100 Kč (drobnější, aby šlo trefit cenu jako 12 900, 14 900...)
+  price = Math.round(price / 100) * 100;
 
   return {
     basePrice: BASE_PRICE,
     finalPrice: price,
     breakdown,
     suggestedRange: {
-      min: Math.round((price * 0.85) / 1000) * 1000,
-      max: Math.round((price * 1.15) / 1000) * 1000,
+      min: Math.round((price * 0.9) / 100) * 100,
+      max: Math.round((price * 1.15) / 100) * 100,
     },
   };
 }
