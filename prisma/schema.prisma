@@ -32,9 +32,11 @@ model Firma {
   platceDph       Boolean     @default(false)
   datovaSchranka  Boolean     @default(true)
   historieObratu  Boolean     @default(false)
+  financniProblemy FinancniProblemy @default(ZADNE)
 
   // Prodej
   cena            Int
+  puvodniCena     Int?        // Pro slevu - pokud > cena, zobrazí se škrtnutá
   cenaDohodnout   Boolean     @default(false)
   status          FirmaStatus @default(VOLNA)
   featured        Boolean     @default(false)
@@ -64,6 +66,12 @@ enum FirmaStatus {
   REZERVOVANA
   PRODANA
   STAZENA
+}
+
+enum FinancniProblemy {
+  ZADNE
+  LEHKE
+  TEZKE
 }
 
 // ==================== POPTÁVKY ====================
@@ -140,9 +148,9 @@ enum UserRole {
 model Settings {
   id            String   @id @default("global")
 
-  telefon       String   @default("+420 123 456 789")
+  telefon       String   @default("+420 733 179 199")
   email         String   @default("firmy@zajcon.cz")
-  adresa        String   @default("Praha, Česká republika")
+  adresa        String   @default("Nové sady 988/2, 602 00 Brno")
 
   heroTitle     String   @default("Hotové firmy k okamžitému převzetí")
   heroSubtitle  String   @default("Prověřené společnosti s čistou historií.")

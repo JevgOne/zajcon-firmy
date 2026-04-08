@@ -8,8 +8,10 @@ export function EditFirmaForm({ firma }: { firma: Firma }) {
   const router = useRouter();
   const [nazev, setNazev] = useState(firma.nazev);
   const [cena, setCena] = useState(firma.cena);
+  const [puvodniCena, setPuvodniCena] = useState<number | "">(firma.puvodniCena ?? "");
   const [cenaDohodnout, setCenaDohodnout] = useState(firma.cenaDohodnout);
   const [status, setStatus] = useState(firma.status);
+  const [financniProblemy, setFinancniProblemy] = useState(firma.financniProblemy);
   const [featured, setFeatured] = useState(firma.featured);
   const [published, setPublished] = useState(firma.published);
   const [popis, setPopis] = useState(firma.popis ?? "");
@@ -28,8 +30,10 @@ export function EditFirmaForm({ firma }: { firma: Firma }) {
         body: JSON.stringify({
           nazev,
           cena,
+          puvodniCena: puvodniCena === "" ? null : puvodniCena,
           cenaDohodnout,
           status,
+          financniProblemy,
           featured,
           published,
           popis: popis || null,
@@ -82,6 +86,18 @@ export function EditFirmaForm({ firma }: { firma: Firma }) {
             />
           </Field>
 
+          <Field label="Původní cena (sleva)">
+            <input
+              type="number"
+              value={puvodniCena}
+              onChange={(e) =>
+                setPuvodniCena(e.target.value === "" ? "" : parseInt(e.target.value))
+              }
+              placeholder="prázdné = bez slevy"
+              className="w-full px-4 py-3 rounded-md border border-pearl focus:border-accent focus:outline-none text-sm"
+            />
+          </Field>
+
           <Field label="Stav">
             <select
               value={status}
@@ -94,6 +110,20 @@ export function EditFirmaForm({ firma }: { firma: Firma }) {
               <option value="REZERVOVANA">Rezervováno</option>
               <option value="PRODANA">Prodáno</option>
               <option value="STAZENA">Staženo</option>
+            </select>
+          </Field>
+
+          <Field label="Finanční stav">
+            <select
+              value={financniProblemy}
+              onChange={(e) =>
+                setFinancniProblemy(e.target.value as typeof financniProblemy)
+              }
+              className="w-full px-4 py-3 rounded-md border border-pearl focus:border-accent focus:outline-none text-sm bg-white"
+            >
+              <option value="ZADNE">Bez problémů</option>
+              <option value="LEHKE">Lehké problémy</option>
+              <option value="TEZKE">Těžké problémy</option>
             </select>
           </Field>
         </div>

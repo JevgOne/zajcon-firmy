@@ -15,9 +15,16 @@ export function Footer() {
                 Firmy
               </span>
             </Link>
-            <p className="text-sm text-silver leading-relaxed">
+            <p className="text-sm text-silver leading-relaxed mb-4">
               Profesionální prodej a výkup společností s.r.o. Působíme na českém
-              trhu od roku 2020.
+              trhu od roku 2018.
+            </p>
+            <p className="text-xs text-silver leading-relaxed">
+              Provozovatel: <strong className="text-white">Zajíček Consulting s.r.o.</strong>
+              <br />
+              IČO 07343957, DIČ CZ07343957
+              <br />
+              Nové sady 988/2, 602 00 Brno
             </p>
           </div>
 
@@ -32,7 +39,7 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/#prodat" className="hover:text-accent transition-colors">
+                <Link href="/prodat" className="hover:text-accent transition-colors">
                   Prodat firmu
                 </Link>
               </li>
@@ -78,8 +85,8 @@ export function Footer() {
             </h4>
             <ul className="space-y-3 text-sm text-silver">
               <li>
-                <a href="tel:+420123456789" className="hover:text-accent transition-colors">
-                  +420 123 456 789
+                <a href="tel:+420733179199" className="hover:text-accent transition-colors">
+                  +420 733 179 199
                 </a>
               </li>
               <li>
@@ -87,13 +94,13 @@ export function Footer() {
                   firmy@zajcon.cz
                 </a>
               </li>
-              <li>Praha, Česká republika</li>
+              <li>Brno, Česká republika</li>
             </ul>
           </div>
         </div>
 
         <div className="border-t border-graphite mt-16 pt-8 flex flex-col md:flex-row justify-between text-xs text-silver">
-          <span>© {new Date().getFullYear()} Zajcon s.r.o. Všechna práva vyhrazena.</span>
+          <span>© {new Date().getFullYear()} Zajíček Consulting s.r.o. Všechna práva vyhrazena.</span>
           <span>firmy.zajcon.cz</span>
         </div>
       </div>

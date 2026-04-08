@@ -27,9 +27,11 @@ export function NovaFirmaForm() {
   const [tags, setTags] = useState<string[]>([]);
   const [popis, setPopis] = useState("");
   const [cena, setCena] = useState(0);
+  const [puvodniCena, setPuvodniCena] = useState<number | "">("");
   const [cenaDohodnout, setCenaDohodnout] = useState(false);
   const [featured, setFeatured] = useState(false);
   const [published, setPublished] = useState(false);
+  const [financniProblemy, setFinancniProblemy] = useState<"ZADNE" | "LEHKE" | "TEZKE">("ZADNE");
   const [priceResult, setPriceResult] = useState<PriceResult | null>(null);
   const [saving, setSaving] = useState(false);
 
@@ -103,9 +105,11 @@ export function NovaFirmaForm() {
           zakladniKapital,
           platceDph,
           historieObratu,
+          financniProblemy,
           tags,
           popis: popis || null,
           cena,
+          puvodniCena: puvodniCena === "" ? null : puvodniCena,
           cenaDohodnout,
           featured,
           published: publish,
@@ -236,6 +240,20 @@ export function NovaFirmaForm() {
                 </div>
               </Field>
 
+              <Field label="Finanční stav firmy">
+                <select
+                  value={financniProblemy}
+                  onChange={(e) =>
+                    setFinancniProblemy(e.target.value as typeof financniProblemy)
+                  }
+                  className="w-full px-4 py-3 rounded-md border border-pearl focus:border-accent focus:outline-none text-sm bg-white"
+                >
+                  <option value="ZADNE">Bez problémů (čistá firma)</option>
+                  <option value="LEHKE">⚠️ Lehké finanční problémy</option>
+                  <option value="TEZKE">🚨 Těžké finanční problémy</option>
+                </select>
+              </Field>
+
               <Field label="Popis (nepovinné)">
                 <textarea
                   value={popis}
@@ -284,6 +302,19 @@ export function NovaFirmaForm() {
                   value={cena}
                   onChange={(e) => setCena(parseInt(e.target.value || "0"))}
                   step={1000}
+                  className="w-full px-4 py-3 rounded-md border border-pearl focus:border-accent focus:outline-none text-sm"
+                />
+              </Field>
+
+              <Field label="Původní cena (pro slevu, nepovinné)">
+                <input
+                  type="number"
+                  value={puvodniCena}
+                  onChange={(e) =>
+                    setPuvodniCena(e.target.value === "" ? "" : parseInt(e.target.value))
+                  }
+                  step={1000}
+                  placeholder="např. 120000 - zobrazí se škrtnutá vedle finální"
                   className="w-full px-4 py-3 rounded-md border border-pearl focus:border-accent focus:outline-none text-sm"
                 />
               </Field>

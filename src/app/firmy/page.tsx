@@ -1,9 +1,10 @@
+import Link from "next/link";
 import prisma from "@/lib/db";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { FirmaCard } from "@/components/FirmaCard";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 
 export const metadata = {
   title: "Nabídka firem",
@@ -21,7 +22,7 @@ export default async function FirmyPage({
     .findMany({
       where: {
         published: true,
-        status: { not: "PRODANA" },
+        status: { notIn: ["STAZENA"] },
         ...(tag ? { tags: { has: tag } } : {}),
       },
       orderBy: [{ featured: "desc" }, { createdAt: "desc" }],
@@ -64,6 +65,31 @@ export default async function FirmyPage({
           )}
         </div>
       </main>
+
+      {/* CTA banner: Chcete prodat firmu? */}
+      <section className="py-20 bg-black text-white">
+        <div className="container-max max-w-4xl text-center">
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <span className="block w-10 h-px bg-accent"></span>
+            <span className="text-xs font-medium uppercase tracking-widest text-accent">
+              Výkup s.r.o.
+            </span>
+            <span className="block w-10 h-px bg-accent"></span>
+          </div>
+          <h2 className="text-3xl md:text-5xl font-black mb-4 text-white">
+            Nenašli jste, co hledáte?
+            <br />
+            Nebo chcete <span className="highlight">prodat</span> svoji firmu?
+          </h2>
+          <p className="text-silver text-lg mb-8 max-w-xl mx-auto">
+            Vykupujeme s.r.o. společnosti rychle a diskrétně. Nezávazná nabídka
+            do 24 hodin.
+          </p>
+          <Link href="/prodat" className="btn btn-accent">
+            Získat nezávaznou nabídku
+          </Link>
+        </div>
+      </section>
 
       <Footer />
     </>

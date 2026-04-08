@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { JsonLd, organizationSchema, websiteSchema } from "@/components/JsonLd";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://firmy.zajcon.cz"),
@@ -8,13 +9,47 @@ export const metadata: Metadata = {
     template: "%s | Zajcon Firmy",
   },
   description:
-    "Prověřené společnosti s čistou historií. Hotové firmy k okamžitému převzetí pro bankovní úvěry, veřejné zakázky nebo rychlý start podnikání.",
+    "Prověřené společnosti s čistou historií. Hotové s.r.o. firmy k okamžitému převzetí pro bankovní úvěry, veřejné zakázky nebo rychlý start podnikání. Výkup do 24 hodin.",
+  keywords: [
+    "prodej s.r.o.",
+    "výkup s.r.o.",
+    "hotová firma",
+    "ready-made firma",
+    "koupit s.r.o.",
+    "prodat firmu",
+    "společnost s historií",
+    "firma pro úvěr",
+    "firma pro tendr",
+    "Zajcon Firmy",
+  ],
   openGraph: {
     title: "Zajcon Firmy | Prodej a výkup společností s.r.o.",
     description:
       "Prověřené společnosti s čistou historií. Hotové firmy k okamžitému převzetí.",
     type: "website",
     locale: "cs_CZ",
+    siteName: "Zajcon Firmy",
+    url: "https://firmy.zajcon.cz",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Zajcon Firmy | Prodej a výkup s.r.o.",
+    description:
+      "Prověřené hotové firmy k okamžitému převzetí. Výkup s.r.o. do 24 hodin.",
+  },
+  alternates: {
+    canonical: "https://firmy.zajcon.cz",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
   },
 };
 
@@ -28,6 +63,7 @@ export default function RootLayout({
           href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap"
           rel="stylesheet"
         />
+        <JsonLd data={[organizationSchema(), websiteSchema()]} />
       </head>
       <body className="min-h-screen flex flex-col">{children}</body>
     </html>

@@ -4,11 +4,27 @@ import prisma from "@/lib/db";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { NakupForm } from "@/components/NakupForm";
+import {
+  JsonLd,
+  firmaProductSchema,
+  breadcrumbSchema,
+} from "@/components/JsonLd";
 import { formatCurrency } from "@/lib/pricing";
 import { calculateAge } from "@/lib/ares";
 import { formatDate } from "@/lib/utils";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
+
+export async function generateStaticParams() {
+  // Pre-generujeme published firmy při buildu pro nejrychlejší TTFB
+  const firmy = await prisma.firma
+    .findMany({
+      where: { published: true, status: { not: "PRODANA" } },
+      select: { slug: true },
+    })
+    .catch(() => []);
+  return firmy.map((f) => ({ slug: f.slug }));
+}
 
 export async function generateMetadata({
   params,
@@ -18,11 +34,20 @@ export async function generateMetadata({
   const { slug } = await params;
   const firma = await prisma.firma.findUnique({ where: { slug } }).catch(() => null);
   if (!firma) return { title: "Firma nenalezena" };
+  const title = firma.metaTitle ?? firma.nazev;
+  const description =
+    firma.metaDescription ??
+    `${firma.nazev} - hotová firma s.r.o. k převzetí. IČO ${firma.ico}, založeno ${firma.datumZalozeni.getFullYear()}, základní kapitál ${formatCurrency(firma.zakladniKapital)}. Cena ${firma.cenaDohodnout ? "dohodou" : formatCurrency(firma.cena)}.`;
   return {
-    title: firma.metaTitle ?? firma.nazev,
-    description:
-      firma.metaDescription ??
-      `${firma.nazev} - hotová firma s.r.o. k převzetí. ${formatCurrency(firma.cena)}.`,
+    title,
+    description,
+    alternates: { canonical: `https://firmy.zajcon.cz/firmy/${firma.slug}` },
+    openGraph: {
+      title,
+      description,
+      type: "website",
+      url: `https://firmy.zajcon.cz/firmy/${firma.slug}`,
+    },
   };
 }
 
@@ -39,9 +64,22 @@ export default async function FirmaDetailPage({
 
   return (
     <>
+      <JsonLd
+        data={[
+          firmaProductSchema(firma),
+          breadcrumbSchema([
+            { name: "Domů", url: "https://firmy.zajcon.cz/" },
+            { name: "Nabídka firem", url: "https://firmy.zajcon.cz/firmy" },
+            {
+              name: firma.nazev,
+              url: `https://firmy.zajcon.cz/firmy/${firma.slug}`,
+            },
+          ]),
+        ]}
+      />
       <Navbar />
 
-      <main className="pt-32 pb-24 min-h-screen">
+      <main className="pt-32 min-h-screen">
         <div className="container-max max-w-5xl">
           <Link
             href="/firmy"
@@ -114,12 +152,39 @@ export default async function FirmaDetailPage({
                 <div className="text-xs uppercase tracking-wider text-slate mb-2">
                   Cena převodu
                 </div>
-                <div className="text-4xl font-black mb-1">
+                {firma.puvodniCena && firma.puvodniCena > firma.cena && !firma.cenaDohodnout && (
+                  <div className="text-lg text-slate line-through mb-1">
+                    {formatCurrency(firma.puvodniCena)}
+                  </div>
+                )}
+                <div
+                  className={`text-4xl font-black mb-1 ${
+                    firma.puvodniCena && firma.puvodniCena > firma.cena && !firma.cenaDohodnout
+                      ? "text-accent"
+                      : ""
+                  }`}
+                >
                   {firma.cenaDohodnout ? "Dohodou" : formatCurrency(firma.cena)}
                 </div>
+                {firma.puvodniCena && firma.puvodniCena > firma.cena && !firma.cenaDohodnout && (
+                  <div className="text-xs font-bold text-accent mb-2">
+                    Sleva {Math.round((1 - firma.cena / firma.puvodniCena) * 100)}%
+                  </div>
+                )}
                 <div className="text-xs text-slate mb-6">
                   Včetně všech poplatků a notáře
                 </div>
+
+                {firma.financniProblemy === "LEHKE" && (
+                  <div className="mb-4 px-3 py-2 rounded-md bg-amber-50 border border-amber-200 text-xs text-amber-900">
+                    ⚠️ Lehké finanční problémy
+                  </div>
+                )}
+                {firma.financniProblemy === "TEZKE" && (
+                  <div className="mb-4 px-3 py-2 rounded-md bg-red-50 border border-red-200 text-xs text-red-900">
+                    🚨 Těžké finanční problémy
+                  </div>
+                )}
 
                 {firma.status === "VOLNA" ? (
                   <NakupForm firmaId={firma.id} firmaNazev={firma.nazev} />
@@ -134,6 +199,49 @@ export default async function FirmaDetailPage({
           </div>
         </div>
       </main>
+
+      {/* CTA: Máte zájem o tuto firmu? - velký formulář pod detailem */}
+      {firma.status === "VOLNA" && (
+        <section className="py-24 mt-24 bg-cloud border-t border-pearl">
+          <div className="container-max max-w-4xl">
+            <div className="text-center mb-12">
+              <div className="flex items-center justify-center gap-3 mb-4">
+                <span className="block w-10 h-px bg-accent"></span>
+                <span className="text-xs font-medium uppercase tracking-widest text-accent">
+                  Nezávazná poptávka
+                </span>
+                <span className="block w-10 h-px bg-accent"></span>
+              </div>
+              <h2 className="text-4xl md:text-5xl font-black mb-4">
+                Máte zájem o {firma.nazev.replace(/ s\.r\.o\.$/i, "")}?
+              </h2>
+              <p className="text-lg text-slate max-w-xl mx-auto">
+                Vyplňte formulář a do 24 hodin se vám ozveme s detaily k převzetí.
+                Žádné poplatky, žádné závazky.
+              </p>
+            </div>
+
+            <div className="bg-white rounded-2xl p-8 md:p-10 shadow-xl border border-pearl max-w-2xl mx-auto">
+              <NakupForm firmaId={firma.id} firmaNazev={firma.nazev} />
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* CTA: Chcete prodat firmu? */}
+      <section className="py-20 bg-black text-white">
+        <div className="container-max max-w-4xl text-center">
+          <h2 className="text-3xl md:text-4xl font-black mb-4 text-white">
+            Chcete <span className="highlight">prodat</span> svoji firmu?
+          </h2>
+          <p className="text-silver text-lg mb-8 max-w-xl mx-auto">
+            Vykupujeme s.r.o. společnosti rychle a diskrétně. Nabídka do 24 hodin.
+          </p>
+          <Link href="/prodat" className="btn btn-accent">
+            Získat nezávaznou nabídku
+          </Link>
+        </div>
+      </section>
 
       <Footer />
     </>

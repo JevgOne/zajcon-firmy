@@ -5,24 +5,28 @@ import { Footer } from "@/components/Footer";
 import { FirmaCard } from "@/components/FirmaCard";
 import { ProdatForm } from "@/components/ProdatForm";
 import { Faq } from "@/components/Faq";
+import { FAQ_ITEMS } from "@/lib/faq-data";
+import { JsonLd, faqSchema } from "@/components/JsonLd";
 
-export const dynamic = "force-dynamic";
+// ISR: cache na 5 minut, on-demand revalidace přes revalidatePath('/') v API
+export const revalidate = 300;
 
 export default async function HomePage() {
   const firmy = await prisma.firma
     .findMany({
-      where: { published: true, status: { not: "PRODANA" } },
+      where: { published: true, status: { notIn: ["STAZENA"] } },
       orderBy: [{ featured: "desc" }, { createdAt: "desc" }],
       take: 5,
     })
     .catch(() => []);
 
   const total = await prisma.firma
-    .count({ where: { published: true, status: { not: "PRODANA" } } })
+    .count({ where: { published: true, status: { notIn: ["STAZENA"] } } })
     .catch(() => 0);
 
   return (
     <>
+      <JsonLd data={faqSchema(FAQ_ITEMS)} />
       <Navbar />
 
       {/* HERO */}

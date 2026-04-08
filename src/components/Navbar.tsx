@@ -24,14 +24,6 @@ export function Navbar() {
           </li>
           <li>
             <Link
-              href="/#prodat"
-              className="text-sm font-medium text-graphite hover:text-black transition-colors"
-            >
-              Prodat firmu
-            </Link>
-          </li>
-          <li>
-            <Link
               href="/#proces"
               className="text-sm font-medium text-graphite hover:text-black transition-colors"
             >
@@ -48,10 +40,10 @@ export function Navbar() {
           </li>
           <li>
             <Link
-              href="/#kontakt"
-              className="px-5 py-2.5 rounded-md bg-black text-white text-sm font-medium hover:bg-graphite transition-all hover:-translate-y-px"
+              href="/prodat"
+              className="px-5 py-2.5 rounded-md bg-accent text-white text-sm font-medium hover:bg-accent-dark transition-all hover:-translate-y-px"
             >
-              Kontakt
+              Chci prodat firmu
             </Link>
           </li>
         </ul>

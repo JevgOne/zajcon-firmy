@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import prisma from "@/lib/db";
 import { auth } from "@/auth";
 import { firmaSchema } from "@/lib/validations";
@@ -17,7 +18,7 @@ export async function GET(req: Request) {
 
   const where: Prisma.FirmaWhereInput = {
     published: true,
-    status: { not: "PRODANA" },
+    status: { notIn: ["STAZENA"] },
   };
 
   if (cenaDo) {
@@ -65,6 +66,12 @@ export async function POST(req: Request) {
     const firma = await prisma.firma.create({
       data: { ...data, slug },
     });
+    revalidatePath("/");
+    revalidatePath("/firmy");
+    revalidatePath("/pro-uvery");
+    revalidatePath("/pro-tendry");
+    revalidatePath("/ready-made");
+    revalidatePath(`/firmy/${slug}`);
     return NextResponse.json(firma, { status: 201 });
   } catch (err) {
     if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2002") {

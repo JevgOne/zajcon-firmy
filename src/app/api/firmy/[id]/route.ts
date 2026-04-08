@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import prisma from "@/lib/db";
 import { auth } from "@/auth";
 import { firmaSchema } from "@/lib/validations";
@@ -34,6 +35,12 @@ export async function PUT(req: Request, ctx: Ctx) {
     where: { id },
     data: parsed.data,
   });
+  revalidatePath("/");
+  revalidatePath("/firmy");
+  revalidatePath("/pro-uvery");
+  revalidatePath("/pro-tendry");
+  revalidatePath("/ready-made");
+  revalidatePath(`/firmy/${firma.slug}`);
   return NextResponse.json(firma);
 }
 
@@ -44,6 +51,9 @@ export async function DELETE(_req: Request, ctx: Ctx) {
   }
 
   const { id } = await ctx.params;
-  await prisma.firma.delete({ where: { id } });
+  const firma = await prisma.firma.delete({ where: { id } });
+  revalidatePath("/");
+  revalidatePath("/firmy");
+  revalidatePath(`/firmy/${firma.slug}`);
   return NextResponse.json({ ok: true });
 }
