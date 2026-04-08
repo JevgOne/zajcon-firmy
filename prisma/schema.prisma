@@ -34,6 +34,10 @@ model Firma {
   historieObratu  Boolean     @default(false)
   financniProblemy FinancniProblemy @default(ZADNE)
 
+  // Sídlo - servis
+  sidloVCene      Boolean     @default(false)  // Je sídlo na 1 rok zdarma součástí ceny?
+  prevodSidlaCena Int         @default(4999)   // Cena za změnu sídla u notáře (notářský zápis)
+
   // Prodej
   cena            Int
   puvodniCena     Int?        // Pro slevu - pokud > cena, zobrazí se škrtnutá

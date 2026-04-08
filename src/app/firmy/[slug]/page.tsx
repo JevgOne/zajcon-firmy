@@ -186,14 +186,38 @@ export default async function FirmaDetailPage({
                   </div>
                 )}
 
-                {firma.status === "VOLNA" ? (
-                  <NakupForm firmaId={firma.id} firmaNazev={firma.nazev} />
-                ) : (
-                  <div className="text-center py-6 text-slate">
-                    Tato firma je momentálně{" "}
-                    {firma.status === "REZERVOVANA" ? "rezervovaná" : "nedostupná"}.
+                {firma.status === "VOLNA" && (
+                  <div className="mb-4 p-4 rounded-xl bg-white border border-pearl">
+                    <div className="flex items-start gap-3 mb-2">
+                      <span className="flex-shrink-0 w-7 h-7 rounded-full bg-accent/15 flex items-center justify-center">
+                        <svg className="w-4 h-4 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                          <circle cx="12" cy="10" r="3" />
+                        </svg>
+                      </span>
+                      <div>
+                        <div className="text-sm font-bold">Změna sídla? +{formatCurrency(firma.prevodSidlaCena)}</div>
+                        <div className="text-xs text-slate mt-0.5">
+                          Notářský zápis i zápis do OR vyřídíme za vás. <Link href="/sluzby/prevod-sidla" className="text-accent hover:underline">Více info</Link>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 )}
+
+                {firma.status === "VOLNA" ? (
+                  <a href="#zajem" className="btn btn-primary w-full">
+                    Mám zájem
+                  </a>
+                ) : firma.status === "REZERVOVANA" ? (
+                  <div className="text-center py-4 px-3 rounded-md bg-amber-50 border border-amber-200 text-sm text-amber-900">
+                    Tato firma je momentálně <strong>rezervovaná</strong>
+                  </div>
+                ) : firma.status === "PRODANA" ? (
+                  <div className="text-center py-4 px-3 rounded-md bg-cloud border border-pearl text-sm text-slate">
+                    Tato firma už byla <strong>prodána</strong>
+                  </div>
+                ) : null}
               </div>
             </aside>
           </div>
@@ -202,7 +226,7 @@ export default async function FirmaDetailPage({
 
       {/* CTA: Máte zájem o tuto firmu? - velký formulář pod detailem */}
       {firma.status === "VOLNA" && (
-        <section className="py-24 mt-24 bg-cloud border-t border-pearl">
+        <section id="zajem" className="py-24 mt-24 bg-cloud border-t border-pearl scroll-mt-24">
           <div className="container-max max-w-4xl">
             <div className="text-center mb-12">
               <div className="flex items-center justify-center gap-3 mb-4">

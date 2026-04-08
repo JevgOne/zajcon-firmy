@@ -40,6 +40,11 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "https://firmy.zajcon.cz",
   },
+  icons: {
+    icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
+    apple: { url: "/apple-icon.svg", type: "image/svg+xml" },
+    shortcut: "/icon.svg",
+  },
   robots: {
     index: true,
     follow: true,
@@ -58,14 +63,10 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="cs">
-      <head>
-        <link
-          href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap"
-          rel="stylesheet"
-        />
+      <body className="min-h-screen flex flex-col">
         <JsonLd data={[organizationSchema(), websiteSchema()]} />
-      </head>
-      <body className="min-h-screen flex flex-col">{children}</body>
+        {children}
+      </body>
     </html>
   );
 }

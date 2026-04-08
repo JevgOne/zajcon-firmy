@@ -13,6 +13,8 @@ export const firmaSchema = z.object({
   datovaSchranka: z.coerce.boolean().default(true),
   historieObratu: z.coerce.boolean().default(false),
   financniProblemy: z.enum(["ZADNE", "LEHKE", "TEZKE"]).default("ZADNE"),
+  sidloVCene: z.coerce.boolean().default(false),
+  prevodSidlaCena: z.coerce.number().int().nonnegative().default(4999),
   cena: z.coerce.number().int().nonnegative(),
   puvodniCena: z.coerce.number().int().nonnegative().optional().nullable(),
   cenaDohodnout: z.coerce.boolean().default(false),

@@ -85,15 +85,14 @@ export function FirmaCard({
             label="Základní kapitál"
             value={formatCurrency(firma.zakladniKapital)}
           />
-          {featured && (
-            <>
-              <Meta
-                label="Historie"
-                value={firma.historieObratu ? "Aktivní obrat" : "Bez obratu"}
-              />
-              <Meta label="DPH" value={firma.platceDph ? "Plátce" : "Neplátce"} />
-            </>
-          )}
+          <Meta
+            label="Plátce DPH"
+            value={firma.platceDph ? "Ano" : "Ne"}
+          />
+          <Meta
+            label="Aktivní obrat"
+            value={firma.historieObratu ? "Ano" : "Ne"}
+          />
         </div>
 
         {/* Finanční problémy badge */}
@@ -108,16 +107,20 @@ export function FirmaCard({
           </div>
         )}
 
-        {(firma.tags.length > 0 || age >= 0) && (
-          <div className="flex flex-wrap gap-2 mb-5">
-            <span className="tag">{age > 0 ? `${age} let` : "Ready-made"}</span>
-            {firma.tags.slice(0, 4).map((t) => (
-              <span key={t} className="tag">
-                {t}
-              </span>
-            ))}
-          </div>
-        )}
+        <div className="flex flex-wrap gap-2 mb-5">
+          <span className="tag">
+            {age > 0
+              ? `${age} ${age === 1 ? "rok" : age <= 4 ? "roky" : "let"}`
+              : "Ready-made"}
+          </span>
+          {firma.platceDph && <span className="tag">DPH</span>}
+          {firma.historieObratu && <span className="tag">Obrat</span>}
+          {firma.tags.slice(0, 3).map((t) => (
+            <span key={t} className="tag">
+              {t}
+            </span>
+          ))}
+        </div>
       </div>
 
       <div className={featured ? "flex flex-col justify-between" : ""}>

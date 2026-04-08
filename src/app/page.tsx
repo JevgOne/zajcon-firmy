@@ -76,7 +76,7 @@ export default async function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-3xl pt-10 border-t border-pearl">
-            <Stat value="850+" label="prodaných společností" />
+            <Stat value="60+" label="prodaných společností" />
             <Stat value="5 dní" label="průměrná doba převodu" />
             <Stat value="100%" label="garance čistoty" />
           </div>
@@ -214,6 +214,124 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* PŘÍBĚH / O NÁS */}
+      <section id="o-nas" className="py-24 bg-black text-white relative overflow-hidden">
+        <div className="absolute inset-0 -z-0">
+          <div
+            className="absolute -top-1/4 -left-1/4 w-[60%] h-[80%] rounded-full opacity-30 blur-3xl"
+            style={{
+              background:
+                "radial-gradient(ellipse, rgba(184,150,90,0.25) 0%, transparent 60%)",
+            }}
+          />
+        </div>
+
+        <div className="container-max relative">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
+            {/* LEVÁ – text příběhu */}
+            <div className="lg:col-span-7">
+              <div className="flex items-center gap-3 mb-6">
+                <span className="block w-10 h-px bg-accent"></span>
+                <span className="text-xs font-medium uppercase tracking-widest text-accent">
+                  Náš příběh
+                </span>
+              </div>
+
+              <h2 className="text-4xl md:text-5xl font-black mb-8 text-white leading-tight">
+                Sedm let na trhu,
+                <br />
+                <span className="highlight">desítky</span> spokojených klientů
+              </h2>
+
+              <div className="space-y-5 text-silver leading-relaxed text-lg max-w-2xl">
+                <p>
+                  <strong className="text-white">
+                    Zajíček Consulting
+                  </strong>{" "}
+                  vznikla v roce 2018 s jedinou ambicí – zjednodušit a zlevnit
+                  prodej hotových firem na českém trhu. Sami jsme totiž zažili,
+                  jaká je to zkušenost stát na druhé straně: dlouhé čekání,
+                  skryté poplatky, nejasné záruky.
+                </p>
+                <p>
+                  Dnes jsme jeden z nejstabilnějších hráčů v oboru. Nemáme
+                  reklamní agenturu ani drahé kanceláře – jen tým, který tomu
+                  rozumí, právní servis na míru a férové ceny stavěné podle
+                  reálných tržních benchmarků.
+                </p>
+                <p>
+                  Každou firmu osobně prověřujeme v insolvenci, u finančního
+                  úřadu, ČSSZ i zdravotních pojišťoven. <strong className="text-white">Garance čistoty je
+                  smluvní</strong> – pokud se cokoli objeví, neseme to my.
+                </p>
+              </div>
+
+              <div className="mt-10 inline-block">
+                <a href="tel:+420733179199" className="btn btn-accent">
+                  +420 733 179 199
+                </a>
+              </div>
+            </div>
+
+            {/* PRAVÁ – timeline / čísla */}
+            <div className="lg:col-span-5">
+              <div className="space-y-6">
+                <div className="grid grid-cols-2 gap-4">
+                  <BigStat number="60+" label="úspěšných převodů" />
+                  <BigStat number="7+" label="let na trhu" />
+                  <BigStat number="100%" label="garance čistoty" />
+                  <BigStat number="3–5" label="dní od smlouvy do zápisu" />
+                </div>
+
+                <div className="border border-graphite rounded-2xl p-7 mt-8">
+                  <h3 className="text-xs font-medium uppercase tracking-widest text-accent mb-5">
+                    Naše hodnoty
+                  </h3>
+                  <ul className="space-y-4">
+                    {[
+                      {
+                        title: "Bez skrytých poplatků",
+                        desc: "Cena, kterou vidíte, je cena, kterou platíte. Notář, OR, právní servis – vše součástí.",
+                      },
+                      {
+                        title: "Diskrétnost",
+                        desc: "NDA na vyžádání, vaše údaje nikam nepředáváme.",
+                      },
+                      {
+                        title: "Individuální přístup",
+                        desc: "Nejsme call centrum – mluvíte s konkrétním člověkem od první minuty.",
+                      },
+                    ].map((v) => (
+                      <li key={v.title} className="flex items-start gap-3">
+                        <span className="flex-shrink-0 w-6 h-6 rounded-full bg-accent/15 flex items-center justify-center mt-0.5">
+                          <svg
+                            className="w-3.5 h-3.5 text-accent"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="3"
+                          >
+                            <polyline points="20 6 9 17 4 12" />
+                          </svg>
+                        </span>
+                        <div>
+                          <div className="font-bold text-white text-sm">
+                            {v.title}
+                          </div>
+                          <div className="text-xs text-silver mt-0.5 leading-relaxed">
+                            {v.desc}
+                          </div>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* FAQ */}
       <section id="faq" className="py-24 bg-cloud">
         <div className="container-max max-w-3xl">
@@ -234,6 +352,17 @@ function Stat({ value, label }: { value: string; label: string }) {
     <div>
       <div className="text-3xl md:text-4xl font-black text-black">{value}</div>
       <div className="text-sm text-slate mt-1">{label}</div>
+    </div>
+  );
+}
+
+function BigStat({ number, label }: { number: string; label: string }) {
+  return (
+    <div className="bg-graphite/40 border border-graphite rounded-xl p-5">
+      <div className="text-3xl md:text-4xl font-black text-accent leading-none">
+        {number}
+      </div>
+      <div className="text-xs text-silver mt-2 leading-tight">{label}</div>
     </div>
   );
 }
