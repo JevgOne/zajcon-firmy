@@ -46,10 +46,13 @@ export function NovaFirmaForm() {
       }
       const data = (await res.json()) as ParsedCompanyData;
       setAresData(data);
-      // Auto-calc price
+      // Auto-fill ZK z VR endpointu (ARES)
+      const aresZk = data.zakladniKapital ?? 1000;
+      setZakladniKapital(aresZk);
+      // Auto-calc price s reálným ZK
       await recalc({
         stariRoky: yearsSince(new Date(data.datumZalozeni)),
-        zakladniKapital,
+        zakladniKapital: aresZk,
         platceDph,
         historieObratu,
         premium,
